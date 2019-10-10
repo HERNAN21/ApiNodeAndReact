@@ -978,3 +978,258 @@ server send data
 -- // var test=`select * from data_array_test1('{${id_grupo}}','{${id_grupo_tipo}}')`;
 
 
+
+
+
+
+
+-- Menu Permisos
+
+CREATE TABLE menu(
+	id int not null primary key,
+	collapse varchar(100) not null, 
+	name varchar(100) not null,
+	icon varchar(100) not null,
+	state varchar(100) not null,
+	path varchar(100) not null,
+	component varchar(100) not null,
+	layout varchar(100) not null,
+	nivel char(50) not null,
+	parent int not null,
+	usuario_registro varchar(100) not null,
+	fecha_registro timestamp not null,
+	usuario_modificacion varchar(100) null,
+	fecha_modificacion timestamp null,
+	estado boolean not null
+)
+
+ALTER TABLE menu
+ADD COLUMN orden integer null;
+
+ALTER TABLE menu
+ALTER COLUMN nivel TYPE int USING nivel::integer;
+
+
+ 
+CREATE SEQUENCE id_menu;
+ALTER TABLE menu ALTER id SET DEFAULT NEXTVAL('id_menu');
+
+select * from menu;
+
+insert into menu(collapse,name,icon,state,path,component,layout,nivel,parent,usuario_registro,fecha_registro,estado)
+values(true,'Playground','ni ni-ui-04 text-info','componentsCollapse','#','','',1,0,'HROJAS',now(),true)
+
+insert into menu(collapse,name,icon,state,path,component,layout,nivel,parent,usuario_registro,fecha_registro,estado)
+values(true,'Seguimiento de Renovaciones','ni ni-archive-2 text-green','','/Seguimientorenovacion','Seguimientorenovacion','/pages',14,1,'HROJAS',now(),true)
+
+
+select * from rol;
+
+
+CREATE TABLE rol(
+	id int not null primary key,
+	descripcion varchar(100) not null,
+	usuario_registro varchar(100) not null,
+	fecha_registro varchar(100) not null, 
+	usuario_modificacion varchar(100) null,
+	fecha_modificacion timestamp null,
+	estado boolean
+)
+
+CREATE SEQUENCE id_rol;
+ALTER TABLE rol ALTER id SET DEFAULT NEXTVAL('id_rol');
+
+
+select * from rol;
+
+
+insert into rol(descripcion,usuario_registro,fecha_registro,estado)
+values('Sistema','Hrojas',now(),true);
+
+
+
+
+
+
+
+DROP TABLE rol_menu;
+CREATE TABLE rol_menu(
+	id_rol int not null,
+	id_menu int not null,
+	usuario_registro varchar(100) not null,
+	fecha_registro timestamp not null,
+	usuario_modificacion varchar(100) null,
+	fecha_modificacion timestamp null,
+	estado boolean,
+	primary key (id_rol,id_menu),
+	foreign key (id_rol) references rol(id),
+	foreign key (id_menu) references menu(id)
+)
+
+select * from rol_menu;
+
+insert into rol_menu(id_rol,id_menu,usuario_registro,fecha_registro,estado)
+values
+(3,1,'HROJAS',now(),true),
+(3,2,'HROJAS',now(),true),
+(3,3,'HROJAS',now(),true),
+(3,4,'HROJAS',now(),true),
+(3,5,'HROJAS',now(),true),
+(2,6,'HROJAS',now(),true),
+(2,7,'HROJAS',now(),true),
+(2,8,'HROJAS',now(),true),
+(2,9,'HROJAS',now(),true),
+(2,10,'HROJAS',now(),true),
+(2,11,'HROJAS',now(),true),
+(2,12,'HROJAS',now(),true),
+(2,13,'HROJAS',now(),true),
+(2,14,'HROJAS',now(),true),
+(2,15,'HROJAS',now(),true);
+
+
+
+DROP table persona_rol;
+CREATE TABLE persona_rol(
+	email varchar(100) not null,
+	id_rol int not null,
+	descripcion varchar(100) not null,
+	usuario_registro varchar(100) not null,
+	fecha_registro timestamp not null,
+	usuario_modificacion varchar(100) null,
+	fecha_modificacion timestamp null,
+	estado int not null,
+	primary key (email),
+	foreign key(id_rol) references rol(id)
+)
+
+select * from persona_rol;
+ALTER TABLE persona_rol
+ALTER COLUMN estado type boolean USING estado::boolean
+
+
+insert into persona_rol(email,id_rol,descripcion,usuario_registro,fecha_registro,estado)
+values('hrojas@summit.com.pe',1,'','HROJAS',now(),true),
+('hernanrojasutani@gmail.com',3,'','HROJAS',now(),true),
+('rojasutanihernan@gmail.com',4,'','HROJAS',now(),true),
+('rojas_utan_21@hotmail.es',1,'','HROJAS',now(),true),
+('rojas_utan_21@hotmail.com',2,'','HROJAS',now(),true),
+('hernan_rojas_21@hotmail.com',4,'','HROJAS',now(),true);
+
+
+
+
+
+select * from menu;
+
+
+
+DROP FUNCTION get_menu();
+CREATE FUNCTION get_menu()
+	RETURNS TABLE(
+		id int,
+		collapse boolean, 
+		name varchar(100),
+		icon varchar(100),
+		state varchar(100),
+		path varchar(100),
+		component varchar(100),
+		layout varchar(100),
+		nivel integer,
+		parent int,
+		usuario_registro varchar(100),
+		fecha_registro timestamp,
+		usuario_modificacion varchar(100),
+		fecha_modificacion timestamp,
+		estado boolean,
+		orden integer
+	)
+	LANGUAGE 'plpgsql'
+AS $$
+BEGIN
+	RETURN QUERY
+		SELECT me.* FROM menu as me;
+END;
+$$;
+
+select * from get_menu();
+
+
+
+SELECT 
+	M.MENU,
+	M.DESCRIPCION,
+	M.HREF,
+	M.NIVEL,
+	M.PADRE,
+	M.ORDEN 
+FROM USUARIO U INNER JOIN MENU_PERMISO P ON U.GRUPO_USUARIO = P.GRUPO_USUARIO 
+INNER JOIN MENU M ON M.MENU = P.MENU
+WHERE U.USUARIO=? AND M.NIVEL=?
+
+
+
+DROP FUNCTION get_menu_permiso;
+CREATE FUNCTION get_menu_permiso(user_permiso varchar(100))
+	returns table (
+		id integer,
+		collapse boolean,
+		name varchar(100),
+		icon varchar(100),
+		state varchar(100),
+		path varchar(100),
+		component varchar(100),
+		layout varchar(100),
+		nivel integer,
+		parent integer,
+		orden integer,
+		estado boolean
+	)
+	LANGUAGE 'plpgsql'
+AS $$
+BEGIN
+	RETURN QUERY
+	SELECT 
+		me.id,
+		me.collapse,
+		me.name,
+		me.icon,
+		me.state,
+		me.path,
+		me.component,
+		me.layout,
+		me.nivel,
+		me.parent,
+		me.orden,
+		me.estado
+	FROM persona_rol AS pr
+	INNER JOIN rol_menu AS rm ON pr.id_rol = rm.id_rol
+	INNER JOIN menu AS me ON me.id=rm.id_menu
+	WHERE pr.email=user_permiso;
+END;
+$$;
+
+
+
+select * from get_menu_permiso('hrojas@summit.com.pe');
+select * from get_menu_permiso('hernanrojasutani@gmail.com');
+
+
+
+
+
+SELECT * 
+
+FROM persona_rol AS pr
+INNER JOIN rol_menu AS rm ON pr.id_rol = rm.id_rol
+INNER JOIN menu AS me ON me.id=rm.id_menu
+WHERE email='hrojas@summit.com.pe';
+
+select * from ROL_MENU;
+SELECT * FROM MENU;
+
+
+-- ORDER BY M.ORDEN
+
+-- ORDER BY M.PADRE,M.ORDEN
+
+
