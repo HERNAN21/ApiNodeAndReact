@@ -14,6 +14,7 @@ const api_name = "/pdr_api/v1";
 api.get(api_name + '/test', (req, res) => {
     // console.log('Hola Mundo')
     res.json({'result':'success','mesage':'hello world'});
+    console.log('Hola')
     // db.sequelize
     //     .query('select codigo as value, descripcion as label,* from general where grupo = :grupo',
     //         { replacements: { grupo: req.params.grupo }, type: db.sequelize.QueryTypes.SELECT }
