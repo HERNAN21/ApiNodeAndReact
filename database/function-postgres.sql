@@ -1233,3 +1233,6 @@ SELECT * FROM MENU;
 -- ORDER BY M.PADRE,M.ORDEN
 
 
+select * from solicitud order by id desc limit 10 offset 30;
+
+select count(id) as total from solicitud;
