@@ -27,6 +27,7 @@ api.get(api_name + '/test', (req, res) => {
 
 module.exports = api
 
+// Ver estes enlaces
 // https://www.youtube.com/watch?v=WxhFq64FQzA
 // https://www.youtube.com/watch?v=hyERULl9jns
 
