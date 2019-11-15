@@ -1,7 +1,7 @@
 const express = require("express")
 const api = express.Router()
 const cors = require('cors')
-// const db = require("../database/db_local")
+const db = require("../database/db_soccer_play_local")
 api.use(cors())
 // process.env.SECRET_KEY = 'secret'
 const api_name = "/pdr_api/v1";
@@ -25,10 +25,27 @@ api.get(api_name + '/test', (req, res) => {
 });
 
 
+api.post(api_name + '/test_post',(req,res)=>{
+    res.json({'result':'success','mesage':'hello post'});
+    // console.log('Hello');
+});
+
+
+api.get(api_name + '/getUsers',(req,res)=>{
+    db.sequelize
+    .query('select * from users',{type:db.sequelize.QueryTypes.SELECT})
+    .then((result)=>{
+        res.json({'mesage':'success','result':result});
+    })
+    .catch((error)=>{
+        res.json({'mesage':'error','result':error});
+    });
+});
+
 module.exports = api
 
 // Ver estes enlaces
 // https://www.youtube.com/watch?v=WxhFq64FQzA
 // https://www.youtube.com/watch?v=hyERULl9jns
 
-
+// https://www.npmjs.com/package/sequelize
