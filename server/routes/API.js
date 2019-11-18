@@ -7,14 +7,18 @@ api.use(cors())
 const api_name = "/pdr_api/v1";
 
 // const AWS = require('aws-sdk');
-// global.fetch = require('node-fetch');
+global.fetch = require('node-fetch');
 
 // Start api solicitud
 // Parameters
 api.get(api_name + '/test', (req, res) => {
     // console.log('Hola Mundo')
+
     res.json({'result':'success','mesage':'hello world'});
     console.log('Hola')
+
+    
+
     // db.sequelize
     //     .query('select codigo as value, descripcion as label,* from general where grupo = :grupo',
     //         { replacements: { grupo: req.params.grupo }, type: db.sequelize.QueryTypes.SELECT }
@@ -31,7 +35,7 @@ api.post(api_name + '/test_post',(req,res)=>{
 });
 
 
-api.get(api_name + '/getUsers',(req,res)=>{
+api.get(api_name + '/getusers',(req,res)=>{
     db.sequelize
     .query('select * from users',{type:db.sequelize.QueryTypes.SELECT})
     .then((result)=>{
@@ -41,6 +45,8 @@ api.get(api_name + '/getUsers',(req,res)=>{
         res.json({'mesage':'error','result':error});
     });
 });
+
+
 
 module.exports = api
 
