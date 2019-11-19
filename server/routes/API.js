@@ -1,13 +1,22 @@
 const express = require("express")
 const api = express.Router()
 const cors = require('cors')
-const db = require("../database/db_soccer_play_local")
+const db = require("../database/db_soccer_play_local");
+var https = require('https')
 api.use(cors())
-// process.env.SECRET_KEY = 'secret'
+process.env.SECRET_KEY = 'secret'
 const api_name = "/pdr_api/v1";
 
 // const AWS = require('aws-sdk');
 global.fetch = require('node-fetch');
+
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+//     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+//     next();
+// });
 
 // Start api solicitud
 // Parameters
